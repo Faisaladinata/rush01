@@ -6,7 +6,7 @@
 /*   By: madinata <madinata@student.42kl.edu.my>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/24 14:25:40 by madinata          #+#    #+#             */
-/*   Updated: 2026/07/24 16:38:41 by madinata         ###   ########.fr       */
+/*   Updated: 2026/07/24 19:42:28 by madinata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,39 +52,33 @@ void	clue_set_one(int coord, int n,
 	}
 }
 
-// Unsets running clues from one side. Either col or row need to be -1.
-void	clue_unset_one(int col, int row, t_clue_state *clue_state)
+// Unsets running clues from one side.
+void	clue_unset_one(int col, int row, t_clue_state *clue_state,
+					t_direction direction)
 {
 	int	diff;
 	int	axis;
 
-	if ((col == -1) == (row == -1))
-		return ;
-	else if (row == -1)
+	if (direction == TOP || direction == BOTTOM)
 		axis = col;
-	else if (col == -1)
+	else if (direction == LEFT || direction == RIGHT)
 		axis = row;
-	else
-		return ;
 	diff = stack_pop(&clue_state->max_idx[axis]);
 	clue_state->max_height[axis] += diff - 1;
 	clue_state->min_height[axis]--;
 }
 
-// Checks clues from one side. Either col or row need to be -1.
-int	clue_validate_one(int col, int row, t_clue_state *clue_state)
+// Checks clues from one side.
+int	clue_validate_one(int col, int row, t_clue_state *clue_state,
+					t_direction direction)
 {
 	int	failed;
 	int	axis;
 
-	if ((col == -1) == (row == -1))
-		return (1);
-	else if (row == -1)
+	if (direction == TOP || direction == BOTTOM)
 		axis = col;
-	else if (col == -1)
+	else if (direction == LEFT || direction == RIGHT)
 		axis = row;
-	else
-		return (1);
 	failed = 0;
 	if (clue_state->max_height[axis] < clue_state->target[axis])
 		failed = 1;
