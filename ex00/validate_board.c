@@ -61,86 +61,46 @@ int	is_valid_placement(int col, int row, t_game_state *state)
 	return (0);
 }
 
-void	initialize_clues(t_clues *clues, int n)
+int	initialize_clues(t_clues *clues, int n)
 {
-	clues->top.target = create_arr(n, 0);
-	clues->top.max_height = create_arr(n, 0);
-	clues->top.min_height = create_arr(n, 0);
-	clues->top.max_idx = stack_create(n);
-	clues->bot.target = create_arr(n, 0);
-	clues->bot.max_height = create_arr(n, 0);
-	clues->bot.min_height = create_arr(n, 0);
-	clues->bot.max_idx = stack_create(n);
-	clues->left.target = create_arr(n, 0);
-	clues->left.max_height = create_arr(n, 0);
-	clues->left.min_height = create_arr(n, 0);
-	clues->left.max_idx = stack_create(n);
-	clues->right.target = create_arr(n, 0);
-	clues->right.max_height = create_arr(n, 0);
-	clues->right.min_height = create_arr(n, 0);
-	clues->right.max_idx = stack_create(n);
+	t_clue_state	*positions[4];
+	int				i;
+
+	positions[0] = &clues->top;
+	positions[1] = &clues->bot;
+	positions[2] = &clues->left;
+	positions[3] = &clues->right;
+	i = 0;
+	while (i < 4)
+	{
+		positions[i]->target = create_arr(n, 0);
+		positions[i]->max_height = create_arr(n, 0);
+		positions[i]->min_height = create_arr(n, 0);
+		positions[i]->max_idx = stack_create(n);
+		if (!positions[i]->target || !positions[i]->max_height
+			|| !positions[i]->min_height || !positions[i]->max_idx)
+			return (free_clues(clues, n), 0);
+		i++;
+	}
+	return (1);
 }
 
 void	free_clues(t_clues *clues, int n)
 {
-	free(clues->top.target);
-	free(clues->top.max_height);
-	free(clues->top.min_height);
-	stack_free(clues->top.max_idx, n);
-	free(clues->bot.target);
-	free(clues->bot.max_height);
-	free(clues->bot.min_height);
-	stack_free(clues->bot.max_idx, n);
-	free(clues->left.target);
-	free(clues->left.max_height);
-	free(clues->left.min_height);
-	stack_free(clues->left.max_idx, n);
-	free(clues->right.target);
-	free(clues->right.max_height);
-	free(clues->right.min_height);
-	stack_free(clues->right.max_idx, n);
-}
+	t_clue_state	*positions[4];
+	int				i;
 
-/*
-// DELETE ME
-void	temp_clues_target(t_clues *clues, int n)
-{
-	int *top = (int[]){1, 2, 4, 3, 4, 3, 3, 3, 4};
-	int *bot = (int[]){3, 4, 1, 3, 3, 3, 2, 4, 2};
-	int *left = (int[]){1, 2, 4, 4, 2, 3, 3, 5, 2};
-	int *right = (int[]){4, 6, 3, 3, 2, 3, 2, 1, 3};
-
-	for (int i = 0; i < n; i++)
-		clues->top.target[i] = top[i];
-	for (int i = 0; i < n; i++)
-		clues->bot.target[i] = bot[i];
-	for (int i = 0; i < n; i++)
-		clues->left.target[i] = left[i];
-	for (int i = 0; i < n; i++)
-		clues->right.target[i] = right[i];
+	positions[0] = &clues->top;
+	positions[1] = &clues->bot;
+	positions[2] = &clues->left;
+	positions[3] = &clues->right;
+	i = 0;
+	while (i < 4)
+	{
+		free(positions[i]->target);
+		free(positions[i]->max_height);
+		free(positions[i]->min_height);
+		stack_free(positions[i]->max_idx, n);
+		i++;
+	}
 }
-#include <stdio.h>
-int main()
-{
-	t_game_state state;
-	state.n = 4;
-	state.board = (int*[]){
-		(int[]){0, 0, 0, 0},
-		(int[]){0, 0, 0, 0},
-		(int[]){0, 0, 0, 0},
-		(int[]){0, 0, 0, 0}
-	};
-	initialize_clues(&state.clues, 4);
-	temp_clues_target(&state.clues, 4);
-
-	printf("out 1: %d\n", is_valid_placement(0, 3, &state));
-	printf("out 2: %d\n", is_valid_placement(0, 1, &state)); //
-	printf("out 3: %d\n", is_valid_placement(1, 2, &state));
-	printf("out 4: %d\n", is_valid_placement(2, 3, &state)); //
-	printf("out 5: %d\n", is_valid_placement(2, 1, &state));
-	printf("out 6: %d\n", is_valid_placement(3, 2, &state)); //
-	printf("out 7: %d\n", is_valid_placement(3, 0, &state));
-	printf("out 8: %d\n", is_valid_placement(0, 2, &state));
-	printf("out 9: %d\n", is_valid_placement(0, 1, &state));
-}
-*/

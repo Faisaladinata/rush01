@@ -19,6 +19,8 @@ int	*create_arr(int size, int init_num)
 	int	*ptr;
 
 	ptr = malloc(size * sizeof(int));
+	if (!ptr)
+		return (0);
 	i = 0;
 	while (i < size)
 		ptr[i++] = init_num;
@@ -32,10 +34,14 @@ int	**create_arr2d(int size_y, int size_x)
 	int	**ptr;
 
 	i = 0;
-	flat = malloc(size_x * size_y * sizeof(int));
-	ptr = malloc(size_y * sizeof(int *));
+	flat = malloc(size_x * size_y * sizeof(*flat));
+	if (!flat)
+		return (0);
 	while (i < size_x * size_y)
 		flat[i++] = 0;
+	ptr = malloc(size_y * sizeof(*ptr));
+	if (!ptr)
+		return (free(flat), NULL);
 	i = 0;
 	while (i < size_y)
 	{
