@@ -1,7 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   stack.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: madinata <madinata@student.42kl.edu.my>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/24 13:16:17 by madinata          #+#    #+#             */
+/*   Updated: 2026/07/24 13:16:33 by madinata         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "rush_one.h"
 #include <stdlib.h>
 
-t_index_stack *stack_create(int n)
+t_index_stack	*stack_create(int n)
 {
 	t_index_stack	*new_arr;
 	int				i;
