@@ -1,7 +1,6 @@
 #include "rush_one.h"
 #include <stdlib.h>
 
-#include <stdio.h>
 t_index_stack *stack_create(int n)
 {
 	t_index_stack	*new_arr;

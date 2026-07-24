@@ -16,6 +16,7 @@
 int	*create_arr(int size, int init_num);
 int	**create_arr2d(int size_y, int size_x);
 
+// index stack
 typedef struct s_index_stack
 {
 	int	*stack;
@@ -27,6 +28,7 @@ int		stack_push(t_index_stack *stack, int num);
 int		stack_pop(t_index_stack *stack);
 int		stack_view(t_index_stack *stack);
 
+// current clue state
 typedef struct s_clue_state
 {
 	int *target;
@@ -35,6 +37,7 @@ typedef struct s_clue_state
 	int	*min_height;
 }	t_clue_state;
 
+// all clues
 typedef struct s_clues
 {
 	t_clue_state 	top;
@@ -43,11 +46,18 @@ typedef struct s_clues
 	t_clue_state	right;
 }	t_clues;
 
+// all game states
 typedef struct s_game_state
 {
 	int		n;
 	int		**board;
 	t_clues	clues;
 }	t_game_state;
+
+// validator
+void	initialize_clues(t_clues *clues, int n);
+void	free_clues(t_clues *clues, int n);
+int		is_valid_placement(int col, int row, t_game_state *state);
+int		clue_unset(int col, int row, t_game_state *state);
 
 #endif
