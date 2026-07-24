@@ -1,138 +1,66 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   validate_board.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: madinata <madinata@student.42kl.edu.my>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/24 13:16:50 by madinata          #+#    #+#             */
+/*   Updated: 2026/07/24 16:30:29 by madinata         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "rush_one.h"
 #include <stdlib.h>
 
-// Sets a number into clues. Needs to be unset manually. Returns 1 on succes or 0 on failure.
-int clue_set(int col, int row, t_game_state *state)
+void	clue_unset_one(int col, int row, t_clue_state *clue_state);
+int		clue_validate_one(int col, int row, t_clue_state *clue_state);
+void	clue_set_one(int coord, int n, t_clue_state *clue_state,
+			t_direction direction);
+
+// Sets a number into clues. Needs to be unset manually if succeeds.
+void	clue_set(int col, int row, t_game_state *state)
 {
-	int	diff;
-	// This is for top
-	if (stack_view(&state->clues.top.max_idx[col]) == -1)
-	{
-		// this is first one so it needs to calculate current height.
-		stack_push(&state->clues.top.max_idx[col], row);
-		// calculate current height based on position
-		state->clues.top.max_height[col] = row + 1;
-		state->clues.top.min_height[col]++;
-	}
-	else if (row < stack_view(&state->clues.top.max_idx[col]))
-	{
-		diff = stack_push(&state->clues.top.max_idx[col], row);
-		// if it jumps too much, decrease the max_height
-		state->clues.top.max_height[col] -= diff - 1;
-		state->clues.top.min_height[col]++;
-	}
-	// now for bottom
-	if (stack_view(&state->clues.bot.max_idx[col]) == -1)
-	{
-		stack_push(&state->clues.bot.max_idx[col], state->n - row - 1);
-		state->clues.bot.max_height[col] = state->n - row;
-		state->clues.bot.min_height[col]++;
-	}
-	else if (state->n - row - 1 < stack_view(&state->clues.bot.max_idx[col]))
-	{
-		diff = stack_push(&state->clues.bot.max_idx[col], state->n - row - 1);
-		state->clues.bot.max_height[col] -= diff - 1;
-		state->clues.bot.min_height[col]++;
-	}
-	// left
-	if (stack_view(&state->clues.left.max_idx[row]) == -1)
-	{
-		stack_push(&state->clues.left.max_idx[row], col);
-		state->clues.left.max_height[row] = col + 1;
-		state->clues.left.min_height[row]++;
-	}
-	else if (col < stack_view(&state->clues.left.max_idx[row]))
-	{
-		diff = stack_push(&state->clues.left.max_idx[row], col);
-		state->clues.left.max_height[row] -= diff - 1;
-		state->clues.left.min_height[row]++;
-	}
-	// right
-	if (stack_view(&state->clues.right.max_idx[row]) == -1)
-	{
-		stack_push(&state->clues.right.max_idx[row], state->n - col - 1);
-		state->clues.right.max_height[row] = state->n - col;
-		state->clues.right.min_height[row]++;
-	}
-	else if (state->n - col - 1 < stack_view(&state->clues.right.max_idx[row]))
-	{
-		diff = stack_push(&state->clues.right.max_idx[row], state->n - col - 1);
-		state->clues.right.max_height[row] -= diff - 1;
-		state->clues.right.min_height[row]++;
-	}
-	return (1);
+	int	coord;
+
+	coord = row * state->n + col;
+	clue_set_one(coord, state->n, &state->clues.top, TOP);
+	clue_set_one(coord, state->n, &state->clues.bot, BOTTOM);
+	clue_set_one(coord, state->n, &state->clues.left, LEFT);
+	clue_set_one(coord, state->n, &state->clues.right, RIGHT);
 }
 
-// Reverses clue in coordinate, restoring old one. Returns 1 on succes or 0 on failure.
-int clue_unset(int col, int row, t_game_state *state)
+// Reverses a clue in coordinate, restoring old one.
+void	clue_unset(int col, int row, t_game_state *state)
 {
-	int	diff;
-	// Top
 	if (row == stack_view(&state->clues.top.max_idx[col]))
-	{
-		diff = stack_pop(&state->clues.top.max_idx[col]);
-		state->clues.top.max_height[col] += diff - 1;
-		state->clues.top.min_height[col]--;
-	}
-	// Bot
+		clue_unset_one(col, -1, &state->clues.top);
 	if (state->n - row - 1 == stack_view(&state->clues.bot.max_idx[col]))
-	{
-		diff = stack_pop(&state->clues.bot.max_idx[col]);
-		state->clues.bot.max_height[col] += diff - 1;
-		state->clues.bot.min_height[col]--;
-	}
-	// Left
+		clue_unset_one(col, -1, &state->clues.bot);
 	if (col == stack_view(&state->clues.left.max_idx[row]))
-	{
-		diff = stack_pop(&state->clues.left.max_idx[row]);
-		state->clues.left.max_height[row] += diff - 1;
-		state->clues.left.min_height[row]--;
-	}
-	// Right
+		clue_unset_one(-1, row, &state->clues.left);
 	if (state->n - col - 1 == stack_view(&state->clues.right.max_idx[row]))
-	{
-		diff = stack_pop(&state->clues.right.max_idx[row]);
-		state->clues.right.max_height[row] += diff - 1;
-		state->clues.right.min_height[row]--;
-	}
-	return (1);
+		clue_unset_one(-1, row, &state->clues.right);
 }
 
+// Checks if a given poistion is valid or not compared to the clues.
+// Returns 1 on succes, 0 otherwise.
 int	is_valid_placement(int col, int row, t_game_state *state)
 {
-	int	result;
+	int				failed;
 
-	result = 0;
+	failed = 0;
 	clue_set(col, row, state);
-	if (state->clues.top.max_height[col] >= state->clues.top.target[col]
-		&& state->clues.top.min_height[col] <= state->clues.top.target[col]
-		&& !(state->clues.top.min_height[col] == state->clues.top.target[col]
-			&& stack_view(&state->clues.top.max_idx[col]) != 0))
-		result++;
-	if (state->clues.bot.max_height[col] >= state->clues.bot.target[col]
-		&& state->clues.bot.min_height[col] <= state->clues.bot.target[col]
-		&& !(state->clues.bot.min_height[col] == state->clues.bot.target[col]
-			&& stack_view(&state->clues.bot.max_idx[col]) != 0))
-		result++;
-	if (state->clues.left.max_height[row] >= state->clues.left.target[row]
-		&& state->clues.left.min_height[row] <= state->clues.left.target[row]
-		&& !(state->clues.left.min_height[row] == state->clues.left.target[row]
-			&& stack_view(&state->clues.left.max_idx[row]) != 0))
-		result++;
-	
-	if (state->clues.right.max_height[row] >= state->clues.right.target[row]
-		&& state->clues.right.min_height[row] <= state->clues.right.target[row]
-		&& !(state->clues.right.min_height[row] == state->clues.right.target[row]
-			&& stack_view(&state->clues.right.max_idx[row]) != 0))
-		result++;
-	
-	if (result == 4)
+	failed += clue_validate_one(col, -1, &state->clues.top);
+	failed += clue_validate_one(col, -1, &state->clues.bot);
+	failed += clue_validate_one(-1, row, &state->clues.left);
+	failed += clue_validate_one(-1, row, &state->clues.right);
+	if (!failed)
 		return (1);
 	clue_unset(col, row, state);
 	return (0);
 }
 
-// initalizes all clues
 void	initialize_clues(t_clues *clues, int n)
 {
 	clues->top.target = create_arr(n, 0);
@@ -174,6 +102,23 @@ void	free_clues(t_clues *clues, int n)
 }
 
 /*
+// DELETE ME
+void	temp_clues_target(t_clues *clues, int n)
+{
+	int *top = (int[]){1, 2, 4, 3, 4, 3, 3, 3, 4};
+	int *bot = (int[]){3, 4, 1, 3, 3, 3, 2, 4, 2};
+	int *left = (int[]){1, 2, 4, 4, 2, 3, 3, 5, 2};
+	int *right = (int[]){4, 6, 3, 3, 2, 3, 2, 1, 3};
+
+	for (int i = 0; i < n; i++)
+		clues->top.target[i] = top[i];
+	for (int i = 0; i < n; i++)
+		clues->bot.target[i] = bot[i];
+	for (int i = 0; i < n; i++)
+		clues->left.target[i] = left[i];
+	for (int i = 0; i < n; i++)
+		clues->right.target[i] = right[i];
+}
 #include <stdio.h>
 int main()
 {
