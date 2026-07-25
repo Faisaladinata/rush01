@@ -19,11 +19,18 @@ t_index_stack	*stack_create(int n)
 	int				i;
 
 	new_arr = malloc(n * sizeof(t_index_stack));
+	if (!new_arr)
+		return (0);
 	i = 0;
 	while (i < n)
 	{
 		new_arr[i].top = 0;
 		new_arr[i].stack = create_arr(n, -1);
+		if (!new_arr[i].stack)
+		{
+			stack_free(new_arr, i);
+			return (0);
+		}
 		i++;
 	}
 	return (new_arr);
@@ -34,6 +41,8 @@ void	stack_free(t_index_stack *stack, int n)
 	int	i;
 
 	i = 0;
+	if (!stack)
+		return ;
 	while (i < n)
 		free(stack[i++].stack);
 	free(stack);

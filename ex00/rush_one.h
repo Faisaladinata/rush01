@@ -55,7 +55,7 @@ typedef struct s_game_state
 }	t_game_state;
 
 // validator
-void			initialize_clues(t_clues *clues, int n);
+int				initialize_clues(t_clues *clues, int n);
 void			free_clues(t_clues *clues, int n);
 int				is_valid_placement(int col, int row, t_game_state *state);
 void			clue_unset(int col, int row, t_game_state *state);
@@ -66,5 +66,7 @@ typedef enum e_direction
 	LEFT,
 	RIGHT
 }	t_direction;
+
+int				solve(int col, int num, t_game_state *state);
 
 #endif

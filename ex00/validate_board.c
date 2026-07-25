@@ -6,7 +6,7 @@
 /*   By: madinata <madinata@student.42kl.edu.my>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/24 13:16:50 by madinata          #+#    #+#             */
-/*   Updated: 2026/07/24 19:47:50 by madinata         ###   ########.fr       */
+/*   Updated: 2026/07/25 12:20:15 by madinata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,42 +63,46 @@ int	is_valid_placement(int col, int row, t_game_state *state)
 	return (0);
 }
 
-void	initialize_clues(t_clues *clues, int n)
+int	initialize_clues(t_clues *clues, int n)
 {
-	clues->top.target = create_arr(n, 0);
-	clues->top.max_height = create_arr(n, 0);
-	clues->top.min_height = create_arr(n, 0);
-	clues->top.max_idx = stack_create(n);
-	clues->bot.target = create_arr(n, 0);
-	clues->bot.max_height = create_arr(n, 0);
-	clues->bot.min_height = create_arr(n, 0);
-	clues->bot.max_idx = stack_create(n);
-	clues->left.target = create_arr(n, 0);
-	clues->left.max_height = create_arr(n, 0);
-	clues->left.min_height = create_arr(n, 0);
-	clues->left.max_idx = stack_create(n);
-	clues->right.target = create_arr(n, 0);
-	clues->right.max_height = create_arr(n, 0);
-	clues->right.min_height = create_arr(n, 0);
-	clues->right.max_idx = stack_create(n);
+	t_clue_state	*positions[4];
+	int				i;
+
+	positions[0] = &clues->top;
+	positions[1] = &clues->bot;
+	positions[2] = &clues->left;
+	positions[3] = &clues->right;
+	i = 0;
+	while (i < 4)
+	{
+		positions[i]->target = create_arr(n, 0);
+		positions[i]->max_height = create_arr(n, 0);
+		positions[i]->min_height = create_arr(n, 0);
+		positions[i]->max_idx = stack_create(n);
+		if (!positions[i]->target || !positions[i]->max_height
+			|| !positions[i]->min_height || !positions[i]->max_idx)
+			return (free_clues(clues, n), 0);
+		i++;
+	}
+	return (1);
 }
 
 void	free_clues(t_clues *clues, int n)
 {
-	free(clues->top.target);
-	free(clues->top.max_height);
-	free(clues->top.min_height);
-	stack_free(clues->top.max_idx, n);
-	free(clues->bot.target);
-	free(clues->bot.max_height);
-	free(clues->bot.min_height);
-	stack_free(clues->bot.max_idx, n);
-	free(clues->left.target);
-	free(clues->left.max_height);
-	free(clues->left.min_height);
-	stack_free(clues->left.max_idx, n);
-	free(clues->right.target);
-	free(clues->right.max_height);
-	free(clues->right.min_height);
-	stack_free(clues->right.max_idx, n);
+	t_clue_state	*positions[4];
+	int				i;
+
+	positions[0] = &clues->top;
+	positions[1] = &clues->bot;
+	positions[2] = &clues->left;
+	positions[3] = &clues->right;
+	i = 0;
+	while (i < 4)
+	{
+		free(positions[i]->target);
+		free(positions[i]->max_height);
+		free(positions[i]->min_height);
+		stack_free(positions[i]->max_idx, n);
+		i++;
+	}
 }
