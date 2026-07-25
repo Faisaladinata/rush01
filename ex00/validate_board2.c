@@ -61,7 +61,7 @@ void	clue_unset_one(int col, int row, t_clue_state *clue_state,
 
 	if (direction == TOP || direction == BOTTOM)
 		axis = col;
-	else if (direction == LEFT || direction == RIGHT)
+	else
 		axis = row;
 	diff = stack_pop(&clue_state->max_idx[axis]);
 	clue_state->max_height[axis] += diff - 1;
@@ -77,7 +77,7 @@ int	clue_validate_one(int col, int row, t_clue_state *clue_state,
 
 	if (direction == TOP || direction == BOTTOM)
 		axis = col;
-	else if (direction == LEFT || direction == RIGHT)
+	else
 		axis = row;
 	failed = 0;
 	if (clue_state->max_height[axis] < clue_state->target[axis])

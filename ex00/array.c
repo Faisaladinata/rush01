@@ -50,3 +50,11 @@ int	**create_arr2d(int size_y, int size_x)
 	}
 	return (ptr);
 }
+
+void	free_board(int **board)
+{
+	if (!board)
+		return ;
+	free(board[0]);
+	free(board);
+}

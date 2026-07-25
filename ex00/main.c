@@ -76,5 +76,8 @@ int	main(int argc, char **argv)
 		valid = solve(0, state.n, &state);
 	}
 	if (!valid)
-		return (write(2, "Error\n", 6), 1);
+		write(1, "Error\n", 6);
+	free_clues(&state.clues, state.n);
+	free_board(state.board);
+	return (!valid);
 }

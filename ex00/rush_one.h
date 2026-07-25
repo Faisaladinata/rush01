@@ -15,6 +15,7 @@
 
 int				*create_arr(int size, int init_num);
 int				**create_arr2d(int size_y, int size_x);
+void			free_board(int **board);
 
 // index stack
 typedef struct s_index_stack

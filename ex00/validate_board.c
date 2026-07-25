@@ -49,7 +49,7 @@ void	clue_unset(int col, int row, t_game_state *state)
 // Returns 1 on succes, 0 otherwise.
 int	is_valid_placement(int col, int row, t_game_state *state)
 {
-	int				failed;
+	int	failed;
 
 	failed = 0;
 	clue_set(col, row, state);
@@ -103,6 +103,10 @@ void	free_clues(t_clues *clues, int n)
 		free(positions[i]->max_height);
 		free(positions[i]->min_height);
 		stack_free(positions[i]->max_idx, n);
+		positions[i]->target = 0;
+		positions[i]->max_height = 0;
+		positions[i]->min_height = 0;
+		positions[i]->max_idx = 0;
 		i++;
 	}
 }
