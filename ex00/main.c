@@ -77,5 +77,4 @@ int	main(int argc, char **argv)
 	}
 	if (!valid)
 		return (write(2, "Error\n", 6), 1);
-	
 }
